@@ -5,18 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>로그인 - Microsoft 365</title>
 <style>
-  body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#f2f2f2}
-  .box{max-width:440px;margin:80px auto;background:#fff;padding:44px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  body{margin:0;font-family:'Segoe UI','Malgun Gothic',sans-serif;background:#f2f2f2;color:#1b1b1b}
+  .box{max-width:440px;margin:70px auto;background:#fff;padding:44px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
   .logo{height:24px;margin-bottom:16px}
   h1{font-size:24px;font-weight:600;margin:0 0 16px}
   input{width:100%;box-sizing:border-box;padding:10px 0;border:none;border-bottom:1px solid #666;font-size:15px;margin-bottom:16px;outline:none}
   .sub{font-size:13px;color:#666;margin-bottom:16px}
   .btn{background:#0067b8;color:#fff;border:none;padding:10px 24px;font-size:15px;float:right;cursor:pointer}
-  .foot{clear:both;padding-top:40px;font-size:11px;color:#888;text-align:right}
+  .foot{clear:both;padding-top:36px;font-size:11px;color:#999;text-align:center}
+  /* 경고(교육) 화면 */
+  .warn{max-width:620px;margin:50px auto;background:#fff;border-top:6px solid #c0392b;box-shadow:0 2px 10px rgba(0,0,0,.18);padding:36px 40px}
+  .warn .ic{font-size:44px;text-align:center}
+  .warn h2{text-align:center;color:#c0392b;font-size:24px;margin:10px 0 4px}
+  .warn .en{text-align:center;color:#c0392b;font-size:16px;margin:0 0 22px;font-weight:600}
+  .warn p{font-size:14px;line-height:1.7;margin:10px 0}
+  .warn .ok{background:#e6f4ea;border:1px solid #b7dfc2;color:#1e7e34;padding:10px 14px;font-size:13px;border-radius:4px;margin:16px 0}
+  .warn ul{font-size:13px;color:#444;line-height:1.8;padding-left:20px}
+  .warn .org{margin-top:24px;font-size:13px;color:#555}
+  .warn .hr{border:none;border-top:1px solid #eee;margin:18px 0}
+  .warn .cbtn{display:block;width:100%;background:#0067b8;color:#fff;border:none;padding:12px;font-size:15px;cursor:pointer;margin-top:20px}
+  .hide{display:none}
 </style>
 </head>
 <body>
-<div class="box">
+<!-- 로그인 화면 -->
+<div class="box" id="loginBox">
   <img class="logo" src="https://aadcdn.msftauth.net/shared/1.0/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg" alt="Microsoft">
   <h1>로그인</h1>
   <form id="f">
@@ -25,17 +38,40 @@
     <div class="sub">비정상 로그인이 감지되어 본인 확인이 필요합니다.</div>
     <button class="btn" type="submit">다음</button>
   </form>
-  <div class="foot">&copy; 2026 Microsoft</div>
+  <div class="foot">보안 인식 모의 훈련 · Security Awareness Simulation &nbsp;|&nbsp; 서연이화 어번 정보보안팀</div>
+</div>
+
+<!-- 경고(교육) 화면 -->
+<div class="warn hide" id="warnBox">
+  <div class="ic">⚠️</div>
+  <h2>모의 피싱 훈련입니다</h2>
+  <div class="en">This was a Phishing Simulation</div>
+
+  <p><b>[한국어]</b> 방금 <b>모의 피싱 이메일</b>의 가짜 로그인 페이지에 계정 정보를 입력하셨습니다. 이것이 <b>실제 공격이었다면</b> 귀하의 계정이 탈취되어 회사 정보가 유출될 수 있었습니다.</p>
+  <p><b>[English]</b> You just entered your credentials on a <b>simulated phishing</b> login page. If this had been a <b>real attack</b>, your account could have been compromised and company data exposed.</p>
+
+  <div class="ok">✅ 안심하세요 — 입력하신 <b>비밀번호는 저장되지 않았습니다.</b> &nbsp;/&nbsp; Don't worry — your <b>password was NOT stored.</b></div>
+
+  <hr class="hr">
+  <p><b>이런 점을 확인하세요 / How to spot phishing:</b></p>
+  <ul>
+    <li>발신자 이메일 주소를 꼼꼼히 확인하세요 / Carefully check the sender's email address</li>
+    <li>링크에 마우스를 올려 실제 주소(URL)를 확인하세요 / Hover over links to see the real URL</li>
+    <li>'긴급', '24시간 내', '계정 정지' 같은 압박 문구를 의심하세요 / Be wary of urgency like "urgent", "within 24h", "account suspended"</li>
+    <li>조금이라도 의심되면 입력하지 말고 정보보안팀에 문의하세요 / When in doubt, don't enter anything — contact IT/Security</li>
+  </ul>
+
+  <p class="org">문의 / Contact: <b>서연이화 어번 정보보안팀 · Seoyon E-HWA Auburn Information Security</b></p>
+
+  <button class="cbtn" id="okBtn" type="button">확인 / OK</button>
 </div>
 
 <script>
-  // ===== 설정: Apps Script 웹앱 URL을 여기에 붙여넣으세요 =====
+  // ===== 설정 =====
   var LOG_URL = "https://script.google.com/macros/s/AKfycbz8TglVF90sIF0OeyOun2OyQdTCHmw4c1hhiHDd4GhMECsPSyPeQyxtjV6QQMJYWB0F/exec";
-  // 제출 후 이동할 진짜 페이지
   var REDIRECT = "https://login.microsoftonline.com";
-  // ===========================================================
+  // ================
 
-  // 수신자 식별자 (이메일 링크의 ?u= 값)
   var u = new URLSearchParams(location.search).get("u") || "unknown";
 
   function log(event, extra){
@@ -57,8 +93,15 @@
     ev.preventDefault();
     var enteredEmail = document.getElementById("email").value || "";
     log("입력제출", enteredEmail);
-    // 잠깐 기다렸다 진짜 로그인으로 리다이렉트
-    setTimeout(function(){ location.href = REDIRECT; }, 600);
+    // 리다이렉트 전에 모의훈련 경고 화면 표시
+    document.getElementById("loginBox").classList.add("hide");
+    document.getElementById("warnBox").classList.remove("hide");
+    window.scrollTo(0,0);
+  });
+
+  // 확인 누르면 진짜 로그인으로 이동
+  document.getElementById("okBtn").addEventListener("click", function(){
+    location.href = REDIRECT;
   });
 </script>
 </body>
